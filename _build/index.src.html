@@ -88,10 +88,6 @@ p.lead{font-size:clamp(17px,1.5vw,22px);line-height:1.55;color:var(--mute);max-w
 .mrow.r span{-webkit-text-stroke-color:rgba(11,22,48,.35)}
 .mrow.r span:nth-child(3n){color:var(--ink)}
 
-/* stats */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:22px;margin-top:56px}
-.stat b{display:block;font-size:clamp(44px,6vw,88px);letter-spacing:-.05em;font-weight:800;line-height:1}
-.stat small{color:var(--mute);font-size:14px;letter-spacing:.08em;text-transform:uppercase}
 
 /* repos */
 .repo{display:flex;flex-direction:column;min-height:260px;text-decoration:none;color:inherit}
@@ -194,11 +190,6 @@ footer a{color:inherit}
       <div class="eyebrow reveal">Selected work</div>
       <h2 class="split vb" data-split>Live from <span class="grad">GitHub.</span></h2>
       <p class="lead reveal">These projects are pulled in real time from <a href="https://github.com/Nisith-Akain" target="_blank" rel="noopener" style="color:var(--blue)">github.com/Nisith-Akain</a>.</p>
-      <div class="stats reveal">
-        <div class="stat"><b data-count id="st-repos">0</b><small>Public repos</small></div>
-        <div class="stat"><b data-count id="st-stars">0</b><small>Stars earned</small></div>
-        <div class="stat"><b data-count id="st-fol">0</b><small>Followers</small></div>
-      </div>
       <div class="grid g3" id="repos">
         <div class="sk"></div><div class="sk"></div><div class="sk"></div>
       </div>
@@ -245,7 +236,6 @@ const RepoService = {
       throw err;
     }
   },
-  user(){ return this.get("user", `https://api.github.com/users/${GH_USER}`); },
   repos(){ return this.get("repos", `https://api.github.com/users/${GH_USER}/repos?per_page=100&sort=pushed`); }
 };
 const LANG = {JavaScript:"#f1e05a",TypeScript:"#3178c6",Python:"#3572A5",HTML:"#e34c26",CSS:"#563d7c","C++":"#f34b7d",C:"#555555",Java:"#b07219","C#":"#178600",Go:"#00ADD8",Rust:"#dea584",Shell:"#89e051",Lua:"#000080",PHP:"#4F5D95",Swift:"#F05138",Kotlin:"#A97BFF"};
@@ -255,11 +245,8 @@ const ago = d => { const s=(Date.now()-new Date(d))/1e3, u=[["year",31536e3],["m
 async function loadRepos(){
   const box = document.getElementById("repos"), note = document.getElementById("repo-note");
   try{
-    const [{data:u},{data:list,cached,stale}] = await Promise.all([RepoService.user(), RepoService.repos()]);
+    const {data:list,cached,stale} = await RepoService.repos();
     const repos = list.filter(r=>!r.fork).sort((a,b)=>new Date(b.pushed_at)-new Date(a.pushed_at));
-    setCount("st-repos", u.public_repos ?? repos.length);
-    setCount("st-stars", list.reduce((a,r)=>a+r.stargazers_count,0));
-    setCount("st-fol", u.followers ?? 0);
     if(!repos.length){ box.innerHTML = `<div class="card"><h3 style="margin-top:0">No public repositories yet</h3><p>Check back soon — new work is on the way.</p></div>`; return; }
     box.innerHTML = repos.slice(0,12).map((r,i)=>`
       <a class="card repo tilt reveal" style="--d:${(i%3)*90}ms" href="${esc(r.html_url)}" target="_blank" rel="noopener">
@@ -268,8 +255,7 @@ async function loadRepos(){
         <h3 style="margin-top:38px">${esc(r.name.replace(/[-_]/g," "))}</h3>
         <p>${esc(r.description || "A project from the studio — open the repository to explore the code.")}</p>
         <div class="meta">
-          ${r.language?`<span><i class="dot" style="background:${LANG[r.language]||"#2f6bff"}"></i>${esc(r.language)}</span>`:""}
-          <span>★ ${r.stargazers_count}</span><span>Updated ${ago(r.pushed_at)}</span>
+          ${r.language?`<span><i class="dot" style="background:${LANG[r.language]||"#2f6bff"}"></i>${esc(r.language)}</span>`:""}<span>Updated ${ago(r.pushed_at)}</span>
         </div>
       </a>`).join("");
     bindTilt(box); observeReveals(box);
@@ -278,8 +264,6 @@ async function loadRepos(){
     box.innerHTML = `<div class="card"><h3 style="margin-top:0">Couldn’t reach GitHub</h3><p>The API may be rate-limited or you’re offline. Browse the work directly on <a href="https://github.com/${GH_USER}" target="_blank" rel="noopener" style="color:var(--blue)">github.com/${GH_USER}</a>.</p></div>`;
   }
 }
-function setCount(id,v){ const el=document.getElementById(id); el.dataset.to=v; if(el.dataset.started) animateCount(el); }
-function animateCount(el){ el.dataset.started=1; const to=+el.dataset.to||0, t0=performance.now(); (function f(t){ const p=Math.min(1,(t-t0)/1400), e=1-Math.pow(1-p,4); el.textContent=Math.round(to*e).toLocaleString(); if(p<1) requestAnimationFrame(f); })(t0); }
 
 /* ===== UI: split text, reveals, tilt, cursor, marquee, scroll state ===== */
 document.getElementById("yr").textContent = new Date().getFullYear();
@@ -303,8 +287,6 @@ document.querySelectorAll("[data-split]").forEach(el=>{
 const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} }),{threshold:.18,rootMargin:"0px 0px -6% 0px"});
 function observeReveals(root=document){ root.querySelectorAll(".reveal,.split").forEach(el=>{ if(!el.classList.contains("in")) io.observe(el); }); }
 observeReveals();
-const cio = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ animateCount(e.target); cio.unobserve(e.target);} }),{threshold:.6});
-document.querySelectorAll("[data-count]").forEach(el=>cio.observe(el));
 
 function bindTilt(root=document){
   root.querySelectorAll(".tilt").forEach(c=>{
