@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nisith Akain Studio — Web Design</title>
+<meta name="description" content="Nisith Akain Studio designs and builds fast, immersive, professional websites.">
+<style>
+:root{
+  --bg:#f4f8ff; --bg2:#e8f0ff; --ink:#0b1630; --mute:#5b6b8c; --blue:#2f6bff; --blue2:#6aa3ff;
+  --card:rgba(255,255,255,.62); --line:rgba(47,107,255,.16);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto}
+body{font-family:Inter,"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);
+  background:radial-gradient(1200px 800px at 80% -10%,#dbe8ff 0%,transparent 60%),radial-gradient(900px 700px at -10% 40%,#eaf1ff 0%,transparent 60%),linear-gradient(180deg,#f8fbff,#eef4ff);
+  background-attachment:fixed;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+#progress{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--blue),var(--blue2));z-index:50}
+#cursor{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1.5px solid var(--blue);
+  z-index:60;pointer-events:none;mix-blend-mode:multiply;transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease),background .3s}
+#cursor.big{width:70px;height:70px;margin:-35px 0 0 -35px;background:rgba(47,107,255,.12)}
+@media (hover:none){#cursor{display:none}}
+
+nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:6px;
+  padding:8px 10px 8px 20px;border-radius:999px;background:rgba(255,255,255,.7);backdrop-filter:blur(18px) saturate(1.4);
+  border:1px solid var(--line);box-shadow:0 10px 40px -12px rgba(30,60,140,.25);max-width:calc(100% - 24px)}
+nav .logo{font-weight:800;letter-spacing:-.02em;margin-right:18px;white-space:nowrap}
+nav .logo i{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--blue);margin-right:8px;transform:rotate(45deg)}
+nav a{color:var(--mute);text-decoration:none;font-size:14px;font-weight:500;padding:9px 14px;border-radius:999px;transition:.3s}
+nav a:hover{color:var(--ink);background:rgba(47,107,255,.08)}
+nav a.cta{background:var(--ink);color:#fff}
+nav a.cta:hover{background:var(--blue)}
+@media(max-width:720px){nav a.hide-m{display:none}nav .logo{margin-right:8px}}
+
+main{position:relative;z-index:2}
+section{position:relative;min-height:100vh;padding:14vh 6vw;display:flex;flex-direction:column;justify-content:center}
+.wrap{max-width:1240px;margin:0 auto;width:100%}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px}
+.eyebrow::before{content:"";width:28px;height:2px;background:var(--blue)}
+h1,h2{letter-spacing:-.045em;line-height:.98;font-weight:800}
+h1{font-size:clamp(46px,9vw,142px)}
+h2{font-size:clamp(38px,6.4vw,96px);max-width:14ch}
+h1 .grad,h2 .grad{background:linear-gradient(100deg,var(--blue),#7db0ff 60%,var(--blue));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 6s linear infinite}
+@keyframes sheen{to{background-position:-200% 0}}
+p.lead{font-size:clamp(17px,1.5vw,22px);line-height:1.55;color:var(--mute);max-width:52ch;margin-top:28px}
+
+/* split text */
+.split .w{display:inline-block;white-space:nowrap}
+.split .c{display:inline-block;opacity:0;filter:blur(18px);transform:translateY(60%) rotateX(-70deg) scale(1.15);transform-origin:50% 100%;
+  transition:opacity .9s var(--ease),filter .9s var(--ease),transform 1.1s var(--ease);transition-delay:calc(var(--i)*22ms)}
+.split.in .c{opacity:1;filter:blur(0);transform:none}
+.reveal{opacity:0;filter:blur(16px);transform:translateY(46px);transition:opacity 1s var(--ease),filter 1s var(--ease),transform 1.1s var(--ease);transition-delay:var(--d,0ms)}
+.reveal.in{opacity:1;filter:blur(0);transform:none}
+.vb{will-change:filter}
+
+.btns{display:flex;gap:14px;flex-wrap:wrap;margin-top:38px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:16px 26px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;color:var(--ink);
+  background:#fff;border:1px solid var(--line);transition:transform .4s var(--ease),box-shadow .4s,background .3s,color .3s;box-shadow:0 8px 28px -14px rgba(30,60,140,.4)}
+.btn.primary{background:var(--blue);color:#fff;border-color:transparent;box-shadow:0 14px 34px -12px rgba(47,107,255,.7)}
+.btn:hover{transform:translateY(-3px)}
+.btn svg{width:16px;height:16px}
+.scrollhint{position:absolute;bottom:34px;left:6vw;display:flex;align-items:center;gap:14px;color:var(--mute);font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+.scrollhint span{display:block;width:1.5px;height:46px;background:linear-gradient(var(--blue),transparent);animation:drip 2s ease-in-out infinite;transform-origin:top}
+@keyframes drip{0%{transform:scaleY(0)}60%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+/* glass cards */
+.grid{display:grid;gap:22px;margin-top:64px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g3{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.card{position:relative;background:var(--card);backdrop-filter:blur(16px) saturate(1.3);border:1px solid rgba(255,255,255,.8);border-radius:26px;padding:32px;
+  box-shadow:0 1px 0 #fff inset,0 24px 60px -30px rgba(30,60,140,.35);transform-style:preserve-3d;transform:perspective(900px) rotateX(var(--rx,0)) rotateY(var(--ry,0));
+  transition:transform .5s var(--ease),box-shadow .5s;overflow:hidden}
+.card::after{content:"";position:absolute;inset:0;background:radial-gradient(400px circle at var(--mx,50%) var(--my,0%),rgba(47,107,255,.14),transparent 60%);opacity:0;transition:opacity .4s;pointer-events:none}
+.card:hover::after{opacity:1}
+.card .num{font-size:13px;font-weight:700;color:var(--blue);letter-spacing:.1em}
+.card h3{font-size:24px;letter-spacing:-.02em;margin:46px 0 12px;transform:translateZ(30px)}
+.card p{color:var(--mute);line-height:1.6;font-size:15.5px;transform:translateZ(16px)}
+.ico{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(140deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 12px 26px -10px rgba(47,107,255,.7);transform:translateZ(40px)}
+.ico svg{width:26px;height:26px}
+
+/* marquee */
+.marquee{padding:6vh 0;overflow:hidden;position:relative;z-index:2;min-height:0;display:block}
+.mrow{display:flex;white-space:nowrap;will-change:transform;font-size:clamp(60px,12vw,190px);font-weight:800;letter-spacing:-.05em;line-height:1.05}
+.mrow span{padding-right:.4em;color:transparent;-webkit-text-stroke:1.5px rgba(47,107,255,.5)}
+.mrow span:nth-child(3n){color:var(--blue);-webkit-text-stroke:0}
+.mrow.r span{-webkit-text-stroke-color:rgba(11,22,48,.35)}
+.mrow.r span:nth-child(3n){color:var(--ink)}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:22px;margin-top:56px}
+.stat b{display:block;font-size:clamp(44px,6vw,88px);letter-spacing:-.05em;font-weight:800;line-height:1}
+.stat small{color:var(--mute);font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+
+/* repos */
+.repo{display:flex;flex-direction:column;min-height:260px;text-decoration:none;color:inherit}
+.repo h3{margin:0 0 10px;font-size:22px;word-break:break-word}
+.repo p{flex:1}
+.repo .meta{display:flex;gap:16px;align-items:center;margin-top:24px;font-size:13.5px;color:var(--mute);flex-wrap:wrap;transform:translateZ(20px)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;background:var(--blue)}
+.repo .arrow{position:absolute;top:26px;right:26px;width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center;border:1px solid var(--line);transition:.4s var(--ease)}
+.repo:hover .arrow{background:var(--blue);color:#fff;transform:rotate(45deg)}
+.sk{min-height:260px;background:linear-gradient(100deg,rgba(255,255,255,.4) 30%,rgba(255,255,255,.9) 50%,rgba(255,255,255,.4) 70%);background-size:300% 100%;animation:shim 1.4s linear infinite;border-radius:26px}
+@keyframes shim{to{background-position:-300% 0}}
+.note{margin-top:22px;color:var(--mute);font-size:14px}
+
+/* process */
+.steps{counter-reset:s;display:grid;gap:0;margin-top:60px;border-top:1px solid var(--line)}
+.step{display:grid;grid-template-columns:90px 1fr 1.2fr;gap:24px;padding:34px 0;border-bottom:1px solid var(--line);align-items:baseline;transition:padding .5s var(--ease),background .4s}
+.step:hover{padding-left:18px;background:linear-gradient(90deg,rgba(47,107,255,.06),transparent)}
+.step span{font-weight:700;color:var(--blue);font-size:14px;letter-spacing:.1em}
+.step h3{font-size:clamp(26px,3.4vw,46px);letter-spacing:-.035em}
+.step p{color:var(--mute);line-height:1.6}
+@media(max-width:760px){.step{grid-template-columns:1fr;gap:8px}}
+
+/* contact */
+form{margin-top:48px;display:grid;gap:16px;max-width:640px}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.f{grid-template-columns:1fr}}
+input,textarea,select{width:100%;font:inherit;padding:18px 20px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.75);backdrop-filter:blur(10px);color:var(--ink);outline:none;transition:.3s}
+input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(47,107,255,.14);background:#fff}
+textarea{min-height:140px;resize:vertical}
+.big-mail{display:inline-block;margin-top:34px;font-size:clamp(22px,3.4vw,44px);font-weight:700;letter-spacing:-.03em;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--blue)}
+footer{position:relative;z-index:2;padding:40px 6vw 60px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;color:var(--mute);font-size:14px}
+footer a{color:inherit}
+#nogl{display:none;position:fixed;inset:0;z-index:0}
+.no-webgl #nogl{display:block;background:radial-gradient(500px 500px at 75% 30%,rgba(47,107,255,.25),transparent 70%)}
+@media (prefers-reduced-motion:reduce){.split .c,.reveal{transition:none;opacity:1;filter:none;transform:none}.mrow{transform:none!important}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="cursor"></div>
+<canvas id="gl"></canvas>
+<div id="nogl"></div>
+
+<nav>
+  <div class="logo"><i></i>Nisith Akain Studio</div>
+  <a href="#services" class="hide-m">Services</a>
+  <a href="#process" class="hide-m">Process</a>
+  <a href="#work">Work</a>
+  <a href="#contact" class="cta">Let’s talk</a>
+</nav>
+
+<main>
+  <section id="hero">
+    <div class="wrap">
+      <div class="eyebrow reveal">Web design &amp; development studio</div>
+      <h1 class="split vb" data-split>We build websites <span class="grad">people remember.</span></h1>
+      <p class="lead reveal" style="--d:500ms">Nisith Akain Studio designs fast, immersive and beautifully engineered sites for ambitious brands — from a sharp landing page to a full 3D experience.</p>
+      <div class="btns reveal" style="--d:700ms">
+        <a class="btn primary" href="#contact">Start a project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn" href="#work">See our work</a>
+      </div>
+    </div>
+    <div class="scrollhint"><span></span>Scroll to explore</div>
+  </section>
+
+  <section id="services">
+    <div class="wrap">
+      <div class="eyebrow reveal">What we do</div>
+      <h2 class="split vb" data-split>Design that <span class="grad">performs.</span></h2>
+      <p class="lead reveal">Strategy, design and code under one roof — so what we design is exactly what ships.</p>
+      <div class="grid g4">
+        <article class="card reveal tilt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div><h3>Website Design</h3><p>Clean, conversion-focused interfaces with a distinct visual identity and obsessive attention to detail.</p></article>
+        <article class="card reveal tilt" style="--d:100ms"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></div><h3>Development</h3><p>Hand-coded, accessible and lightning-fast sites and web apps built on modern, maintainable foundations.</p></article>
+        <article class="card reveal tilt" style="--d:200ms"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><h3>3D &amp; Motion</h3><p>Immersive WebGL scenes, scroll-driven storytelling and micro-interactions that make brands feel alive.</p></article>
+        <article class="card reveal tilt" style="--d:300ms"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div><h3>Growth &amp; SEO</h3><p>Performance tuning, technical SEO and analytics so your new site keeps earning long after launch.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="mrow" data-speed="-1"><span>Design</span><span>Motion</span><span>3D</span><span>Code</span><span>Brand</span><span>Design</span><span>Motion</span><span>3D</span><span>Code</span><span>Brand</span></div>
+    <div class="mrow r" data-speed="1"><span>Fast</span><span>Bold</span><span>Clean</span><span>Alive</span><span>Yours</span><span>Fast</span><span>Bold</span><span>Clean</span><span>Alive</span><span>Yours</span></div>
+  </div>
+
+  <section id="process">
+    <div class="wrap">
+      <div class="eyebrow reveal">How we work</div>
+      <h2 class="split vb" data-split>From idea to <span class="grad">launch.</span></h2>
+      <div class="steps">
+        <div class="step reveal"><span>01</span><h3>Discover</h3><p>We learn your goals, audience and competitors, then define a clear scope and success metrics.</p></div>
+        <div class="step reveal"><span>02</span><h3>Design</h3><p>Wireframes, visual direction and interactive prototypes you can click through before a line of code.</p></div>
+        <div class="step reveal"><span>03</span><h3>Build</h3><p>Clean, responsive, performant code with animation and 3D where it adds meaning, not noise.</p></div>
+        <div class="step reveal"><span>04</span><h3>Launch &amp; grow</h3><p>Testing, deployment, analytics and ongoing support to keep improving after go-live.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="wrap">
+      <div class="eyebrow reveal">Selected work</div>
+      <h2 class="split vb" data-split>Live from <span class="grad">GitHub.</span></h2>
+      <p class="lead reveal">These projects are pulled in real time from <a href="https://github.com/Nisith-Akain" target="_blank" rel="noopener" style="color:var(--blue)">github.com/Nisith-Akain</a>.</p>
+      <div class="stats reveal">
+        <div class="stat"><b data-count id="st-repos">0</b><small>Public repos</small></div>
+        <div class="stat"><b data-count id="st-stars">0</b><small>Stars earned</small></div>
+        <div class="stat"><b data-count id="st-fol">0</b><small>Followers</small></div>
+      </div>
+      <div class="grid g3" id="repos">
+        <div class="sk"></div><div class="sk"></div><div class="sk"></div>
+      </div>
+      <p class="note" id="repo-note"></p>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <div class="eyebrow reveal">Contact</div>
+      <h2 class="split vb" data-split>Let’s build something <span class="grad">great.</span></h2>
+      <a class="big-mail reveal" href="mailto:h.a.dnisith@gmail.com">h.a.dnisith@gmail.com</a>
+      <form id="cform" class="reveal">
+        <div class="f"><input name="name" placeholder="Your name" required><input name="email" type="email" placeholder="Your email" required></div>
+        <textarea name="msg" placeholder="Tell us about your project" required></textarea>
+        <div class="btns" style="margin-top:6px"><button class="btn primary" type="submit" style="border:0;cursor:pointer;font:inherit;font-weight:600">Send message <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <a class="btn" href="https://github.com/Nisith-Akain" target="_blank" rel="noopener">GitHub</a></div>
+      </form>
+    </div>
+  </section>
+
+  <footer><span>© <span id="yr"></span> Nisith Akain Studio</span><span><a href="https://github.com/Nisith-Akain" target="_blank" rel="noopener">github.com/Nisith-Akain</a> · <a href="mailto:h.a.dnisith@gmail.com">h.a.dnisith@gmail.com</a></span></footer>
+</main>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script>
+/* ===== Backend layer: GitHub repo service (cached, with graceful fallback) ===== */
+const GH_USER = "Nisith-Akain";
+const RepoService = {
+  ttl: 10*60*1000,
+  async get(key, url){
+    const ck = "gh:"+key;
+    try{ const c = JSON.parse(localStorage.getItem(ck)||"null"); if(c && Date.now()-c.t < this.ttl) return {data:c.d, cached:true}; }catch(e){}
+    try{
+      const r = await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
+      if(!r.ok) throw new Error(r.status);
+      const d = await r.json();
+      try{ localStorage.setItem(ck, JSON.stringify({t:Date.now(),d})); }catch(e){}
+      return {data:d, cached:false};
+    }catch(err){
+      try{ const c = JSON.parse(localStorage.getItem(ck)||"null"); if(c) return {data:c.d, cached:true, stale:true}; }catch(e){}
+      throw err;
+    }
+  },
+  user(){ return this.get("user", `https://api.github.com/users/${GH_USER}`); },
+  repos(){ return this.get("repos", `https://api.github.com/users/${GH_USER}/repos?per_page=100&sort=pushed`); }
+};
+const LANG = {JavaScript:"#f1e05a",TypeScript:"#3178c6",Python:"#3572A5",HTML:"#e34c26",CSS:"#563d7c","C++":"#f34b7d",C:"#555555",Java:"#b07219","C#":"#178600",Go:"#00ADD8",Rust:"#dea584",Shell:"#89e051",Lua:"#000080",PHP:"#4F5D95",Swift:"#F05138",Kotlin:"#A97BFF"};
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ago = d => { const s=(Date.now()-new Date(d))/1e3, u=[["year",31536e3],["month",2592e3],["day",86400],["hour",3600],["minute",60]]; for(const [n,v] of u) if(s>=v){const k=Math.floor(s/v);return k+" "+n+(k>1?"s":"")+" ago"} return "just now"; };
+
+async function loadRepos(){
+  const box = document.getElementById("repos"), note = document.getElementById("repo-note");
+  try{
+    const [{data:u},{data:list,cached,stale}] = await Promise.all([RepoService.user(), RepoService.repos()]);
+    const repos = list.filter(r=>!r.fork).sort((a,b)=>new Date(b.pushed_at)-new Date(a.pushed_at));
+    setCount("st-repos", u.public_repos ?? repos.length);
+    setCount("st-stars", list.reduce((a,r)=>a+r.stargazers_count,0));
+    setCount("st-fol", u.followers ?? 0);
+    if(!repos.length){ box.innerHTML = `<div class="card"><h3 style="margin-top:0">No public repositories yet</h3><p>Check back soon — new work is on the way.</p></div>`; return; }
+    box.innerHTML = repos.slice(0,12).map((r,i)=>`
+      <a class="card repo tilt reveal" style="--d:${(i%3)*90}ms" href="${esc(r.html_url)}" target="_blank" rel="noopener">
+        <div class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></div>
+        <span class="num">${String(i+1).padStart(2,"0")}</span>
+        <h3 style="margin-top:38px">${esc(r.name.replace(/[-_]/g," "))}</h3>
+        <p>${esc(r.description || "A project from the studio — open the repository to explore the code.")}</p>
+        <div class="meta">
+          ${r.language?`<span><i class="dot" style="background:${LANG[r.language]||"#2f6bff"}"></i>${esc(r.language)}</span>`:""}
+          <span>★ ${r.stargazers_count}</span><span>Updated ${ago(r.pushed_at)}</span>
+        </div>
+      </a>`).join("");
+    bindTilt(box); observeReveals(box);
+    note.textContent = stale ? "Showing cached repositories (GitHub is currently unreachable)." : (cached ? "Loaded from local cache · refreshes every 10 minutes." : "Fetched live from the GitHub API.");
+  }catch(err){
+    box.innerHTML = `<div class="card"><h3 style="margin-top:0">Couldn’t reach GitHub</h3><p>The API may be rate-limited or you’re offline. Browse the work directly on <a href="https://github.com/${GH_USER}" target="_blank" rel="noopener" style="color:var(--blue)">github.com/${GH_USER}</a>.</p></div>`;
+  }
+}
+function setCount(id,v){ const el=document.getElementById(id); el.dataset.to=v; if(el.dataset.started) animateCount(el); }
+function animateCount(el){ el.dataset.started=1; const to=+el.dataset.to||0, t0=performance.now(); (function f(t){ const p=Math.min(1,(t-t0)/1400), e=1-Math.pow(1-p,4); el.textContent=Math.round(to*e).toLocaleString(); if(p<1) requestAnimationFrame(f); })(t0); }
+
+/* ===== UI: split text, reveals, tilt, cursor, marquee, scroll state ===== */
+document.getElementById("yr").textContent = new Date().getFullYear();
+document.querySelectorAll("[data-split]").forEach(el=>{
+  let i=0;
+  const walk = (node, out) => {
+    node.childNodes.forEach(n=>{
+      if(n.nodeType===3){
+        n.textContent.split(/(\s+)/).forEach(tok=>{
+          if(!tok) return;
+          if(/^\s+$/.test(tok)){ out.appendChild(document.createTextNode(" ")); return; }
+          const w=document.createElement("span"); w.className="w";
+          [...tok].forEach(ch=>{ const c=document.createElement("span"); c.className="c"; c.textContent=ch; c.style.setProperty("--i",i++); w.appendChild(c); });
+          out.appendChild(w);
+        });
+      } else if(n.nodeType===1){ const clone=n.cloneNode(false); walk(n,clone); out.appendChild(clone); }
+    });
+  };
+  const frag=document.createElement("div"); walk(el,frag); el.innerHTML=frag.innerHTML;
+});
+const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} }),{threshold:.18,rootMargin:"0px 0px -6% 0px"});
+function observeReveals(root=document){ root.querySelectorAll(".reveal,.split").forEach(el=>{ if(!el.classList.contains("in")) io.observe(el); }); }
+observeReveals();
+const cio = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ animateCount(e.target); cio.unobserve(e.target);} }),{threshold:.6});
+document.querySelectorAll("[data-count]").forEach(el=>cio.observe(el));
+
+function bindTilt(root=document){
+  root.querySelectorAll(".tilt").forEach(c=>{
+    if(c._t) return; c._t=1;
+    c.addEventListener("pointermove",e=>{ const r=c.getBoundingClientRect(), x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height;
+      c.style.setProperty("--ry",((x-.5)*12)+"deg"); c.style.setProperty("--rx",((.5-y)*12)+"deg"); c.style.setProperty("--mx",x*100+"%"); c.style.setProperty("--my",y*100+"%"); });
+    c.addEventListener("pointerleave",()=>{ c.style.setProperty("--rx","0deg"); c.style.setProperty("--ry","0deg"); });
+  });
+}
+bindTilt();
+
+const cur = document.getElementById("cursor"); let cx=0,cy=0,tx=0,ty=0;
+addEventListener("pointermove",e=>{ tx=e.clientX; ty=e.clientY; });
+document.querySelectorAll("a,button,.card,input,textarea").forEach(el=>{ el.addEventListener("pointerenter",()=>cur.classList.add("big")); el.addEventListener("pointerleave",()=>cur.classList.remove("big")); });
+document.addEventListener("pointerover",e=>{ if(e.target.closest&&e.target.closest("a,button,.card")) cur.classList.add("big"); });
+document.addEventListener("pointerout",e=>{ if(e.target.closest&&e.target.closest("a,button,.card")) cur.classList.remove("big"); });
+
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener("click",e=>{ const t=document.querySelector(a.getAttribute("href")); if(t){ e.preventDefault(); t.scrollIntoView({behavior:"smooth"}); } }));
+
+document.getElementById("cform").addEventListener("submit",e=>{
+  e.preventDefault(); const f=new FormData(e.target);
+  const body = `${f.get("msg")}\n\n— ${f.get("name")} (${f.get("email")})`;
+  location.href = `mailto:h.a.dnisith@gmail.com?subject=${encodeURIComponent("Project enquiry from "+f.get("name"))}&body=${encodeURIComponent(body)}`;
+});
+
+const bar=document.getElementById("progress"), marquees=[...document.querySelectorAll(".mrow")], vbs=[...document.querySelectorAll(".vb")];
+const S = { y:0, target:0, vel:0, max:1 };
+function measure(){ S.max = Math.max(1, document.documentElement.scrollHeight - innerHeight); }
+addEventListener("resize",measure); addEventListener("load",measure); measure();
+addEventListener("scroll",()=>{ S.target = scrollY; },{passive:true});
+let mOff=[0,0];
+function uiTick(dt){
+  S.vel = S.target - S.y; S.y += S.vel*0.085;
+  const p = S.y/S.max; bar.style.transform=`scaleX(${p})`;
+  const v = Math.min(Math.abs(S.vel)/40,1);
+  // velocity-driven blur + skew on headings and marquees
+  vbs.forEach(el=>{ el.style.filter = v>.04 ? `blur(${(v*5).toFixed(2)}px)` : ""; });
+  marquees.forEach((m,i)=>{ const base=+m.dataset.speed; mOff[i]+= base*(0.6+v*14); const w=m.scrollWidth/2; if(mOff[i]<-w) mOff[i]+=w; if(mOff[i]>0) mOff[i]-=w;
+    m.style.transform=`translate3d(${mOff[i]}px,0,0) skewX(${(-S.vel*.06*base).toFixed(2)}deg)`; m.style.filter = v>.08?`blur(${(v*4).toFixed(2)}px)`:""; });
+  cx+=(tx-cx)*.2; cy+=(ty-cy)*.2; cur.style.transform=`translate(${cx}px,${cy}px)`;
+}
+loadRepos();
+
+/* ===== 3D scene (Three.js + Blender-made models) ===== */
+const GLB_B64 = "__GLB_BASE64__";
+(async function init3D(){
+  let THREE, GLTFLoader, RoomEnvironment;
+  try{
+    THREE = await import("three");
+    ({GLTFLoader} = await import("three/addons/loaders/GLTFLoader.js"));
+    ({RoomEnvironment} = await import("three/addons/environments/RoomEnvironment.js"));
+    const canvas = document.getElementById("gl");
+    const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:"high-performance"});
+    renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+    const scene = new THREE.Scene();
+    const pm = new THREE.PMREMGenerator(renderer);
+    scene.environment = pm.fromScene(new RoomEnvironment(),0.04).texture;
+    const cam = new THREE.PerspectiveCamera(50,1,0.1,200);
+    const key = new THREE.DirectionalLight(0xffffff,1.6); key.position.set(4,8,6); scene.add(key);
+    scene.add(new THREE.HemisphereLight(0xdbe8ff,0xffffff,0.7));
+
+    // camera path
+    const P = [[0,0,14],[2.2,.6,6],[-2.5,-.4,-4],[2.4,.9,-14],[-2,-.6,-24],[2.5,.4,-34],[-1.6,.6,-44],[0,0,-54]].map(a=>new THREE.Vector3(...a));
+    const curve = new THREE.CatmullRomCurve3(P,false,"catmullrom",0.5);
+
+    // load Blender models
+    const bin = Uint8Array.from(atob(GLB_B64),c=>c.charCodeAt(0)).buffer;
+    const gltf = await new Promise((res,rej)=>new GLTFLoader().parse(bin,"",res,rej));
+    const geos = {}; gltf.scene.traverse(o=>{ if(o.isMesh) geos[o.name]=o.geometry; });
+    const mats = {
+      blue: new THREE.MeshPhysicalMaterial({color:0x2f6bff,roughness:.18,metalness:.1,clearcoat:1,clearcoatRoughness:.1}),
+      white: new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:.32,metalness:0,clearcoat:.6}),
+      glass: new THREE.MeshPhysicalMaterial({color:0xcfe0ff,roughness:.04,metalness:0,transmission:.92,thickness:1.2,ior:1.45,clearcoat:1,transparent:true}),
+      chrome: new THREE.MeshStandardMaterial({color:0xdfe8fb,roughness:.12,metalness:1}),
+      sky: new THREE.MeshPhysicalMaterial({color:0x8db8ff,roughness:.25,clearcoat:1})
+    };
+    const wire = new THREE.LineBasicMaterial({color:0x2f6bff,transparent:true,opacity:.55});
+    const items = [];
+    const names = Object.keys(geos);
+    const combos = [["Knot","blue"],["Ico","glass"],["Octa","white"],["Ring","chrome"],["Cube","sky"],["Cone","blue"],["Capsule","white"],["Ico","blue"],["Ring","blue"],["Cube","glass"],["Knot","chrome"],["Octa","sky"],["Capsule","glass"],["Cone","white"]];
+    const N = 34;
+    for(let i=0;i<N;i++){
+      const [g,m] = combos[i%combos.length]; if(!geos[g]) continue;
+      const t = 0.03 + (i/(N-1))*0.94;
+      const pt = curve.getPoint(t), tan = curve.getTangent(t);
+      const side = new THREE.Vector3().crossVectors(tan,new THREE.Vector3(0,1,0)).normalize();
+      const sgn = i%2? 1:-1, off = 2.6 + (i*37%10)/10*4.4;
+      const mesh = new THREE.Mesh(geos[g],mats[m]);
+      const grp = new THREE.Group(); grp.add(mesh);
+      if(g==="Ico"||g==="Octa"){ const e=new THREE.LineSegments(new THREE.EdgesGeometry(geos[g]),wire); e.scale.setScalar(1.001); grp.add(e); }
+      const s = (g==="Ring"?1.6:1) * (0.55 + ((i*53)%10)/10*1.1);
+      grp.scale.setScalar(s);
+      grp.position.copy(pt).addScaledVector(side,sgn*off).add(new THREE.Vector3(0,(((i*29)%10)/10-.5)*4,(((i*17)%10)/10-.5)*3));
+      grp.rotation.set(i,i*1.7,i*.6);
+      scene.add(grp);
+      items.push({grp,base:grp.position.clone(),rs:new THREE.Vector3(.1+(i%5)*.06,.15+(i%3)*.08,.05+(i%4)*.05),ph:i*1.3,s});
+    }
+    // hero centerpiece: big knot behind the headline
+    const hero = new THREE.Mesh(geos.Knot||geos[names[0]],mats.blue); hero.scale.setScalar(2.6); hero.position.set(4.2,.4,4); scene.add(hero);
+    const heroWire = new THREE.LineSegments(new THREE.EdgesGeometry(geos.Ico||geos[names[0]]),wire); heroWire.scale.setScalar(4.2); heroWire.position.copy(hero.position); scene.add(heroWire);
+
+    // particles
+    const PC = 900, pos = new Float32Array(PC*3);
+    for(let i=0;i<PC;i++){ const t=Math.random(), pt=curve.getPoint(t); pos[i*3]=pt.x+(Math.random()-.5)*26; pos[i*3+1]=pt.y+(Math.random()-.5)*16; pos[i*3+2]=pt.z+(Math.random()-.5)*8; }
+    const pg = new THREE.BufferGeometry(); pg.setAttribute("position",new THREE.BufferAttribute(pos,3));
+    const pts = new THREE.Points(pg,new THREE.PointsMaterial({color:0x2f6bff,size:.06,transparent:true,opacity:.55,sizeAttenuation:true}));
+    scene.add(pts);
+
+    function resize(){ const w=innerWidth,h=innerHeight; renderer.setSize(w,h,false); cam.aspect=w/h; cam.fov = w<700?62:50; cam.updateProjectionMatrix(); }
+    addEventListener("resize",resize); resize();
+    const mouse = new THREE.Vector2(), sm = new THREE.Vector2();
+    addEventListener("pointermove",e=>{ mouse.set((e.clientX/innerWidth-.5)*2,(e.clientY/innerHeight-.5)*2); });
+    const clock = new THREE.Clock(); const look = new THREE.Vector3();
+    renderer.setAnimationLoop(()=>{
+      const dt = Math.min(clock.getDelta(),.05), time = clock.elapsedTime;
+      uiTick(dt);
+      const p = Math.min(Math.max(S.y/S.max,0),1)*0.965;
+      sm.lerp(mouse,.05);
+      const cp = curve.getPoint(p); look.copy(curve.getPoint(Math.min(p+.045,1)));
+      cam.position.set(cp.x+sm.x*.7, cp.y-sm.y*.5, cp.z);
+      cam.lookAt(look.x+sm.x*.5, look.y-sm.y*.3, look.z);
+      cam.rotation.z += Math.sin(time*.3)*.004 + Math.max(-.08,Math.min(.08,-S.vel*.0015));
+      items.forEach(o=>{ o.grp.rotation.x+=o.rs.x*dt; o.grp.rotation.y+=o.rs.y*dt; o.grp.rotation.z+=o.rs.z*dt;
+        o.grp.position.y = o.base.y + Math.sin(time*.8+o.ph)*.35; });
+      hero.rotation.x = time*.2; hero.rotation.y = time*.32; heroWire.rotation.y=-time*.15; heroWire.rotation.x=time*.1;
+      hero.position.y = .4+Math.sin(time*.7)*.25; heroWire.position.y = hero.position.y;
+      pts.rotation.y = Math.sin(time*.05)*.05;
+      renderer.render(scene,cam);
+    });
+    document.body.classList.add("gl-ready");
+  }catch(err){
+    console.warn("3D disabled:",err);
+    document.body.classList.add("no-webgl");
+    (function loop(){ uiTick(); requestAnimationFrame(loop); })();
+  }
+})();
+</script>
+</body>
+</html>
